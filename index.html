@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>メモを開いています...</title>
+  <script>
+    var params = new URLSearchParams(window.location.search);
+    var id = params.get('id');
+    if (id) {
+      window.location.href = 'applenotes://showNote?identifier=' + id;
+    }
+  </script>
+</head>
+<body>
+  <p>Apple Notesを開いています...</p>
+  <p id="fallback" style="display:none">
+    <a id="link" href="#">手動でタップして開く</a>
+  </p>
+  <script>
+    var params2 = new URLSearchParams(window.location.search);
+    var id2 = params2.get('id');
+    setTimeout(function() {
+      if (id2) {
+        var link = document.getElementById('link');
+        link.href = 'applenotes://showNote?identifier=' + id2;
+        document.getElementById('fallback').style.display = 'block';
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
