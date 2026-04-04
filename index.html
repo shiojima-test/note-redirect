@@ -20,9 +20,20 @@
   </div>
   <script>
     var params = new URLSearchParams(window.location.search);
-    var id = params.get('id');
-    if (id) {
-      document.getElementById('openBtn').href = 'applenotes://showNote?identifier=' + id;
+    var scheme = params.get('scheme');
+    if (scheme === 'craft') {
+      var blockId = params.get('blockId');
+      var spaceId = params.get('spaceId');
+      if (blockId && spaceId) {
+        var craftUrl = 'craftdocs://open?blockId=' + blockId + '&spaceId=' + spaceId;
+        document.getElementById('openBtn').href = craftUrl;
+        document.getElementById('openBtn').textContent = 'Craftで開く';
+      }
+    } else {
+      var id = params.get('id');
+      if (id) {
+        document.getElementById('openBtn').href = 'applenotes://showNote?identifier=' + id;
+      }
     }
   </script>
 </body>
