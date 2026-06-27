@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PLAUDスキーム判定</title>
+<style>
+ body{font-family:-apple-system,'Meiryo',sans-serif;background:#F5E4C4;margin:0;padding:24px;color:#1f2a30}
+ .wrap{max-width:480px;margin:0 auto}
+ h1{font-size:18px;color:#1f2a30}
+ p{font-size:14px;color:#444;line-height:1.7}
+ a.btn{display:block;padding:16px;margin:10px 0;font-size:16px;color:#fff;background:#E88A0A;border-radius:12px;text-decoration:none;text-align:center;font-weight:bold}
+ a.web{background:#2E8EC4}
+ .note{font-size:13px;color:#555;background:#fff;border-left:4px solid #3AABA8;padding:12px;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>PLAUDスキーム判定テスト</h1>
+<p>上から順にタップして、<b>PLAUDアプリが開くボタン</b>がどれか確認してください。開いた番号と、正しい録音（野球版データサイエンス／6-19）に飛んだかを教えてください。何も起きない・エラーが出るボタンはハズレです。</p>
+
+<a class="btn" href="plaud://">① plaud:// （アプリが開くか）</a>
+<a class="btn" href="plaud://file/94b6b2546bf412c0bdc7423726669536">② plaud://file/ID</a>
+<a class="btn" href="plaud://open?id=94b6b2546bf412c0bdc7423726669536">③ plaud://open?id=ID</a>
+<a class="btn" href="plaud://recording/94b6b2546bf412c0bdc7423726669536">④ plaud://recording/ID</a>
+<a class="btn" href="plaud://detail?id=94b6b2546bf412c0bdc7423726669536">⑤ plaud://detail?id=ID</a>
+<a class="btn" href="plaudapp://file/94b6b2546bf412c0bdc7423726669536">⑥ plaudapp://file/ID</a>
+<a class="btn web" href="https://web.plaud.ai/file/94b6b2546bf412c0bdc7423726669536">（参考）web版で開く</a>
+
+<div class="note">
+① でアプリが開けばスキームは存在します。あとは ②〜⑥ のどれが「その録音」に飛ぶかを見ます。<br>
+全部ハズレの場合は、PLAUDアプリで録音を開き「共有 → リンクをコピー」したものをチャットに貼ってください。そこから正しい形式を割り出します。
+</div>
+</div>
+</body>
+</html>
