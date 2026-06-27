@@ -1,38 +1,79 @@
 <!DOCTYPE html>
-<html>
+<!-- note-redirect v1.1 (2026-06-27): Apple Notes / Craft に加えて PLAUD(scheme=plaud) 分岐を追加 -->
+<html lang="ja">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>メモを開く</title>
+  <title>開く (note-redirect v1.1)</title>
   <style>
-    body { font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f5f5f7; }
+    body { font-family: -apple-system, 'Meiryo', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f5f5f7; }
     .container { text-align: center; padding: 40px; }
     .btn { display: inline-block; padding: 16px 40px; font-size: 18px; color: white; background: #007AFF; border-radius: 12px; text-decoration: none; margin: 20px 0; }
     .btn:active { background: #005EC4; }
+    .btn.plaud { background: #E88A0A; }
+    .btn.plaud:active { background: #c5740a; }
     p { color: #666; font-size: 14px; }
+    .sub { font-size: 12px; }
+    .sub a { color: #2E8EC4; }
+    .ver { position: fixed; bottom: 8px; right: 10px; color: #bbb; font-size: 11px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <p>📝</p>
-    <a id="openBtn" class="btn" href="#">メモを開く</a>
-    <p>タップしてApple Notesのメモを開きます</p>
+    <p id="icon">📝</p>
+    <a id="openBtn" class="btn" href="#">開く</a>
+    <p id="desc">タップして開きます</p>
+    <p class="sub" id="sub"></p>
   </div>
+  <div class="ver">v1.1</div>
   <script>
     var params = new URLSearchParams(window.location.search);
     var scheme = params.get('scheme');
+    var btn = document.getElementById('openBtn');
+    var desc = document.getElementById('desc');
+    var sub = document.getElementById('sub');
+
     if (scheme === 'craft') {
+      // ===== Craft（既存） =====
       var blockId = params.get('blockId');
       var spaceId = params.get('spaceId');
       if (blockId && spaceId) {
         var craftUrl = 'craftdocs://open?blockId=' + blockId + '&spaceId=' + spaceId;
-        document.getElementById('openBtn').href = craftUrl;
-        document.getElementById('openBtn').textContent = 'Craftで開く';
+        btn.href = craftUrl;
+        btn.textContent = 'Craftで開く';
+        desc.textContent = 'タップしてCraftのメモを開きます';
+      }
+    } else if (scheme === 'plaud') {
+      // ===== PLAUD（新規） =====
+      var pid = params.get('id');
+      var webUrl = 'https://web.plaud.ai/file/' + pid;
+      // 特定録音に飛ぶアプリ内パスが判明したら下行を 'plaud://file/' + pid 等に差し替えるだけでOK
+      var appUrl = 'plaud://';
+      var ua = navigator.userAgent || '';
+      var isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
+      document.getElementById('icon').textContent = '🎙️';
+      if (isMobile) {
+        // スマホ: PLAUDアプリを起動
+        btn.className = 'btn plaud';
+        btn.href = appUrl;
+        btn.textContent = 'PLAUDアプリで開く';
+        desc.textContent = 'タップしてPLAUDアプリを開きます';
+        sub.innerHTML = 'アプリが開かない場合は <a href="' + webUrl + '">web版で開く</a>';
+      } else {
+        // PC: その録音のweb版へ自動遷移
+        btn.className = 'btn plaud';
+        btn.href = webUrl;
+        btn.textContent = 'PLAUDを開く';
+        desc.textContent = 'PLAUD（web）を開いています…';
+        window.location.replace(webUrl);
       }
     } else {
+      // ===== Apple Notes（既存・デフォルト） =====
       var id = params.get('id');
       if (id) {
-        document.getElementById('openBtn').href = 'applenotes://showNote?identifier=' + id;
+        btn.href = 'applenotes://showNote?identifier=' + id;
+        btn.textContent = 'メモを開く';
+        desc.textContent = 'タップしてApple Notesのメモを開きます';
       }
     }
   </script>
