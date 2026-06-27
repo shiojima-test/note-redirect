@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- note-redirect v1.1 (2026-06-27): Apple Notes / Craft に加えて PLAUD(scheme=plaud) 分岐を追加 -->
+<!-- note-redirect v1.2 (2026-06-27): PLAUD分岐にタイトルコピー＋アプリ内検索誘導を追加 -->
 <html lang="ja">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>開く (note-redirect v1.1)</title>
+  <title>開く (note-redirect v1.2)</title>
   <style>
     body { font-family: -apple-system, 'Meiryo', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f5f5f7; }
     .container { text-align: center; padding: 40px; }
@@ -25,7 +25,7 @@
     <p id="desc">タップして開きます</p>
     <p class="sub" id="sub"></p>
   </div>
-  <div class="ver">v1.1</div>
+  <div class="ver">v1.2</div>
   <script>
     var params = new URLSearchParams(window.location.search);
     var scheme = params.get('scheme');
@@ -46,19 +46,35 @@
     } else if (scheme === 'plaud') {
       // ===== PLAUD（新規） =====
       var pid = params.get('id');
+      var ptitle = params.get('t') || '';
       var webUrl = 'https://web.plaud.ai/file/' + pid;
-      // 特定録音に飛ぶアプリ内パスが判明したら下行を 'plaud://file/' + pid 等に差し替えるだけでOK
+      // PLAUDは録音単位のアプリ用ディープリンクを公開していないため、アプリは plaud:// で起動（ファイル一覧）。
+      // スマホではタイトルをクリップボードにコピーし、アプリ内検索で目的の録音へ到達させる。
       var appUrl = 'plaud://';
       var ua = navigator.userAgent || '';
       var isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
       document.getElementById('icon').textContent = '🎙️';
       if (isMobile) {
-        // スマホ: PLAUDアプリを起動
+        // スマホ: タイトルをコピー → PLAUDアプリ起動（アプリ内検索で目的の録音へ）
         btn.className = 'btn plaud';
         btn.href = appUrl;
         btn.textContent = 'PLAUDアプリで開く';
-        desc.textContent = 'タップしてPLAUDアプリを開きます';
-        sub.innerHTML = 'アプリが開かない場合は <a href="' + webUrl + '">web版で開く</a>';
+        if (ptitle) {
+          desc.innerHTML = 'タップでPLAUDアプリが開きます。<br>アプリ右上の検索に貼り付けるとこの録音が出ます：<br><b style="color:#1f2a30">' + ptitle + '</b>';
+          sub.innerHTML = '（タイトルは自動コピーされます） / <a href="' + webUrl + '">web版で開く</a>';
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            try {
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(ptitle);
+              }
+            } catch (err) {}
+            setTimeout(function () { window.location.href = appUrl; }, 150);
+          });
+        } else {
+          desc.textContent = 'タップしてPLAUDアプリを開きます';
+          sub.innerHTML = 'アプリが開かない場合は <a href="' + webUrl + '">web版で開く</a>';
+        }
       } else {
         // PC: その録音のweb版へ自動遷移
         btn.className = 'btn plaud';
